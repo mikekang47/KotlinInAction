@@ -205,3 +205,64 @@ fun mix(c1: Color, c2: Color) =
 집합 set으로 만들어 주는 메서드인 setOf를 사용해서 컬렉션을 구성했고,
 컬렉션으로 when문을 구성했다.
 
+인자가 없는 when으로도 구성이 가능하다.
+
+```kotlin
+fun mixOptimized(c1: Color, c2: Color) = 
+  when {
+    (c1 == RED && c2 == YELLOW) || 
+    (c1 == YELLOW && c2 == RED) -> 
+    ORANGE
+    ...
+  
+  }
+```
+
+이런식으로 구성이 가능하다.
+다만 인자가 없는 when을 구성할 경우 반드시 분기의 조건은 불리언 결과를 계산하는 식이어야 한다.
+
+
+ 
+#### smart cast
+
+코틀린에서는 '스마트 캐스트'라는 기능이 있다.
+스마트 캐스트는 컴파일러가 변수의 타입을 인지해 캐스팅 해주는 것이다.
+
+스마트 캐스트를 사용하기 위해서는 먼저 is로 타입을 확인해야 한다.
+
+```kotlin
+if(e is Num) {
+  e.value
+} else if(e is Sum) {
+  eval(e.right) + eval(e.left)
+}
+```
+이렇게 e의 타입을 is를 통해서 검사만 해주면 바로 사용이 가능하다.
+
+이 덕분에 if를 간단하게 when으로 변경 가능하다.
+
+```kotlin
+fun eval(e: Expr): Int = 
+  if(e is Num) {
+    e.value
+  } else if(e is Sum) {
+    eval(e.right) + eval(e.left)
+  } else {
+    throw new IllegalArgumentException("Unknown expression")
+  }
+
+  
+
+
+fun eval(e:Expr): Int =
+  when(e) {
+    is Num -> 
+      e.value
+    is Sum -> 
+      eval(e.right) + eval(e.left)
+    else ->
+      throw IllegalArgumentException("Unknown expression")
+  }
+```
+이렇게 훨씬 가독성 좋게 변경이 가능하다.
+
